@@ -25,7 +25,4 @@ public class SignInPasswordPage extends PageObject{
 		return new InboxPage(driver);
 	}
 
-	public boolean isInit(){
-		return passwordInput.isDisplayed();
-	}
 }

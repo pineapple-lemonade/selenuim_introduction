@@ -11,6 +11,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 public class TestInitializer {
 	private static ChromeDriverService service;
@@ -20,7 +21,7 @@ public class TestInitializer {
 	@BeforeClass
 	public static void setUp(){
 		service = new ChromeDriverService.Builder()
-				.usingDriverExecutable(new File("D:\\chrome webdriver\\chromedriver.exe"))
+				.usingDriverExecutable(new File("src/main/resources/chromedriver/chromedriver.exe"))
 				.usingAnyFreePort()
 				.build();
 		service.start();
@@ -34,6 +35,7 @@ public class TestInitializer {
 	@Before
 	public void createDriver(){
 		driver = new RemoteWebDriver(service.getUrl(), new ChromeOptions());
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 	}
 
 	@After

@@ -26,7 +26,4 @@ public class SignInEmailPage extends PageObject{
 		return new SignInPasswordPage(driver);
 	}
 
-	public boolean isInit(){
-		return emailInput.isDisplayed();
-	}
 }

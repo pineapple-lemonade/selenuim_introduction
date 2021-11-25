@@ -6,6 +6,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
@@ -33,57 +35,34 @@ public class InboxPage extends PageObject{
 	@FindBy(xpath = "//div[@class='Am Al editable LW-avf tS-tW']")
 	private WebElement messageInput;
 
-	@FindBy(xpath = "//div[@class='dC']")
+	@FindBy(xpath = "//div[@class='dC']//*[contains(text(),'Отправить')]")
 	private WebElement submitMessageButton;
 
-	public boolean isInit(){
-		return mainMenu.isDisplayed();
-	}
-
 	@SneakyThrows
-	public int getAmountOfSubjectsEmails(){
+	public String getAmountOfSubjectsEmailsAndSenderAddress(){
 		int counter = 0;
+		String emailToSend = "null";
 		for (WebElement email : inboxEmails){
-			email.click();
-			Thread.sleep(1000);
-			WebElement subject = driver.findElement(By.xpath("//div[@class='ha']"));
-			if (subject.getText().substring(0,27).equals("Simbirsoft Тестовое задание")){
+			WebElement subject = email.findElement(By.className("bog"));
+			if (subject.getText().equals("Simbirsoft Тестовое задание")){
+				WebElement senderEmail = driver.findElement(By.className("yP"));
+				emailToSend = senderEmail.getAttribute("email");
 				counter++;
 			}
-			driver.get("https://mail.google.com/mail/u/0/#inbox");
 		}
-		return counter;
+		return counter + "," + emailToSend;
 	}
 
-	@SneakyThrows
-	public String getEmailOfPerson(){
-		String personEmail = "";
-		for (WebElement email : inboxEmails){
-			email.click();
-			Thread.sleep(1000);
-			WebElement person = driver.findElement(By.xpath("//span[@class='go']"));
-			WebElement subject = driver.findElement(By.xpath("//div[@class='ha']"));
-			if (subject.getText().substring(0,27).equals("Simbirsoft Тестовое задание")){
-				personEmail = person.getText();
-				break;
-			}
-		}
-		return personEmail.substring(1, personEmail.length() - 1);
-	}
 
 	@SneakyThrows
 	public void writeMessage(String recipient, String subject, String text){
+		WebDriverWait wait = new WebDriverWait(driver, 2);
 		writeButton.click();
-		Thread.sleep(1000);
-		recipientInput.click();
+		wait.until(ExpectedConditions.elementToBeClickable(submitMessageButton));
 		recipientInput.sendKeys(recipient);
-		Thread.sleep(1000);
-		//subjectInput.click();
 		subjectInput.sendKeys(subject);
-		Thread.sleep(1000);
-		messageInput.click();
 		messageInput.sendKeys(text);
-		Thread.sleep(1000);
 		submitMessageButton.click();
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//*[text()='Письмо отправлено.']"))));
 	}
 }
