@@ -1,0 +1,2 @@
+first of all you need to put start server.bat file into directory with chromedriver and selenium server
+after that, you must be convinced that your system PATH contains path to chromedriver.exe
